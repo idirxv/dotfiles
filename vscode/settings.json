@@ -1,0 +1,32 @@
+{
+    "workbench.iconTheme": "material-icon-theme",
+    "editor.minimap.enabled": false,
+    "workbench.colorTheme": "GitHub Dark",
+    "workbench.editor.wrapTabs": true,
+    "workbench.colorCustomizations": {
+        "tab.activeBorderTop": "#ffffff",
+        "tab.activeBorder": "#FFFFFF"
+    },
+    "window.menuBarVisibility": "toggle",
+    "files.associations": {
+        "*.conf": "kconfig"
+    },
+    "bitbake.buildConfigurations": [],
+    "bitbake.disableEmbeddedLanguagesFiles": true,
+    "bitbake.disableConfigModification": true,
+    "bitbake.parseOnSave": false,
+    "python.analysis.experimentalserver": false,
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": "active",
+    "json.schemas": [],
+    "editor.renderWhitespace": "all",
+    "search.followSymlinks": false,
+    "todohighlight.keywords": [
+        {
+            "text": "NOTE:",
+            "color": "#ff0000",
+            "backgroundColor": "white",
+            "overviewRulerColor": "grey",
+        },
+    ],
+}
