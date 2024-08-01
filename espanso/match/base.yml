@@ -46,6 +46,9 @@ matches:
 
   - trigger: "!ltftp"
     replace: "tftp -g 192.168.5.10 -l "
+
+  - trigger: "!mcu"
+    replace: "/sys/bus/i2c/devices/0-0034/"
   # Print the output of a shell command
   # - trigger: ":shell"
   #   replace: "{{output}}"
