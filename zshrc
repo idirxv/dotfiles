@@ -7,13 +7,11 @@ fi
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
-export PATH=${PATH}:/usr/sbin
-export PATH=${PATH}:${HOME}/.diff-so-fancy
+
+# Path to your Oh My Zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
 
 DOTFILES_DIR="${HOME}/dotfiles"
-
-# Path to your oh-my-zsh installation.
-export ZSH="${HOME}/.oh-my-zsh"
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
@@ -68,47 +66,34 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-
-export FZF_BASE="${HOME}/.fzf"
-export FZF_DEFAULT_COMMAND="find ."
-
 plugins=(
 	git
 	zsh-syntax-highlighting
 	fzf
 	dirhistory
-	autojump
-	tig
 	copybuffer
 	copypath
-	gitfast
-  vscode
+	vscode
+	diff-so-fancy
 	)
 
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
-
-# export MANPATH="/usr/local/man:$MANPATH"
-export PATH="${HOME}/.local/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$PATH:/opt/nvim-linux64/bin"
+export PATH="$PATH:$HOME/.local/bin"
 
 # You may need to manually set your language environment
-# export LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export LC_CTYPE=en_US.UTF-8
+
 
 [[ -f ${DOTFILES_DIR}/zshrc.aliases ]] && source ${DOTFILES_DIR}/zshrc.aliases
-[[ -f ${DOTFILES_DIR}/zshrc.sgc ]] && source ${DOTFILES_DIR}/zshrc.sgc
 
-[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
-[[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-if [ -z "$DISPLAY" ]; then
-    export DISPLAY=":0"
-fi
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-
-CURRENT_TERM=$(ps -o 'cmd=' -p $(ps -o 'ppid=' -p $$))
-if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ] && [[ ! ${CURRENT_TERM} =~ vscode ]]; then
-	exec tmux
-fi
