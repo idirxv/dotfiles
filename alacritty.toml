@@ -30,9 +30,9 @@ shape = "Block"
 
 [font]
 size = 11.0
-normal = { family = "MesloLGSNF", style = "Regular" }
-bold = { family = "MesloLGSNF", style = "Bold" }
-italic = { family = "MesloLGSNF", style = "Italic" }
+normal = { family = "FiraCodeNerdFont", style = "Regular" }
+bold = { family = "FiraCodeNerdFont", style = "Bold" }
+italic = { family = "FiraCodeNerdFont", style = "Italic" }
 
 [[keyboard.bindings]]
 action = "ScrollPageUp"
