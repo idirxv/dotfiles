@@ -1,26 +1,7 @@
-[colors.bright]
-black = "0x555551"
-blue = "0x007FFF"
-cyan = "0x00CCCC"
-green = "0x03C03C"
-magenta = "0xFF1493"
-red = "0xFF2400"
-white = "0xFFFAFA"
-yellow = "0xFDFF00"
+import = [
+    "~/dotfiles/alacritty-theme/themes/breeze.toml"
+]
 
-[colors.normal]
-black = "0x222221"
-blue = "0x0087BD"
-cyan = "0x20B2AA"
-green = "0x32d16e"
-magenta = "0x9A4EAE"
-red = "0xdf0a0a"
-white = "0xC6C6C4"
-yellow = "0xFFD700"
-
-[colors.primary]
-background = "0x10100E"
-foreground = "0xC6C6C4"
 
 [cursor.style]
 blinking = "Always"
