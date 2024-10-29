@@ -10,6 +10,10 @@ alias lt='ls --tree'
 
 alias LS='/usr/bin/ls'
 
+realpath_copy() {
+    realpath $1 | tr -d "\n" | c
+}
+alias rlpc='realpath_copy'
 alias pwdc='pwd | tr -d "\n" | c'
 alias rlp='realpath'
 alias lsr='ls | rg'
