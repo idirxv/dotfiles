@@ -61,3 +61,5 @@ alias glsfo='git ls-files -o'
 alias gcpys='git rev-parse HEAD | cut -c 1-10 | c'
 
 alias lg='lazygit'
+
+alias lsrvh='${DOTFILES_DIR}/scripts/local-servers.sh http'
