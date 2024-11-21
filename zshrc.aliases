@@ -18,9 +18,8 @@ alias pwdc='pwd | tr -d "\n" | c'
 alias rlp='realpath'
 alias lsr='ls | rg'
 
-alias hdc='${HOME}/my_scripts/hex_conv -hd'                         # hex/dec converter
-alias hdca='${HOME}/my_scripts/hex_conv -hd -a'                     # hex/dec converter (show all)
-alias dhc='${HOME}/my_scripts/hex_conv -dh'                         # dec/hex converter
+alias hdc='${DOTFILES_DIR}/scripts/hex_converter.py hex'             # hex/dec converter
+alias dhc='${DOTFILES_DIR}/scripts/hex_converter.py decimal'         # dec/hex converter
 
 # TMUX customs
 alias tm-wn='echo sc_$(tmux display-message -p "#{window_name}")'   # tmux window name
