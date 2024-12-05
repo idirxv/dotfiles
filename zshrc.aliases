@@ -63,3 +63,4 @@ alias gcpss='git rev-parse HEAD | cut -c 1-10 | c'          # copy last commit s
 alias lg='lazygit'
 
 alias lsrvh='${DOTFILES_DIR}/scripts/local-servers.sh http'
+alias drun='${DOTFILES_DIR}/scripts/docker/docker_run.py'
