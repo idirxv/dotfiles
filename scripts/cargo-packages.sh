@@ -15,6 +15,7 @@ packages=(
     "bat"
     "fd-find"
     "ripgrep"
+    "zoxide"
 )
 
 for package in "${packages[@]}"
