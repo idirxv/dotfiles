@@ -1,0 +1,30 @@
+{
+    "image1": {
+        "name": "my_container",
+        "image": "my_image",
+        "interactive": true,
+        "autoremove": true,
+        "detach": false,
+        "ports": [
+            "8080:80",
+            "443:443"
+        ],
+        "device": "/dev/sda:/dev/xvda",
+        "mounts": {
+            "/host/path": "/container/path",
+            "/another/host/path": "/another/container/path"
+        },
+        "env": {
+            "key": "value",
+            "key2": "value2"
+        },
+        "memory": "512m",
+        "cpus": 2
+    },
+    "image2": {
+        "name": "my_other_container",
+        "image": "my_image2",
+        "interactive": true,
+        "autoremove": true
+    }
+}
