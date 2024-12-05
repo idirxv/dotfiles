@@ -57,7 +57,8 @@ alias glsf='git ls-files -m -o'
 alias glsfm='git ls-files -m'
 alias glsfo='git ls-files -o'
 
-alias gcpys='git rev-parse HEAD | cut -c 1-10 | c'
+alias gcps='git rev-parse HEAD | tr -d "\n" | c'            # copy last commit hash
+alias gcpss='git rev-parse HEAD | cut -c 1-10 | c'          # copy last commit short hash
 
 alias lg='lazygit'
 
