@@ -21,6 +21,15 @@ DOCKER_CONTAINERS = [
                    "-v ~/.ssh:/home/yoctouser/.ssh "
                    "-v ~/.bash_history_docker_18:/home/yoctouser/.bash_history "
                    "--name yocto-ubuntu-18.04 crops/yocto:ubuntu-18.04-base"
+    },
+    {
+        "name": "yocto-debian-11",
+        "command": "docker run -it --rm "
+                   "-v /data:/data "
+                   "-v ~/Projects:/workspace "
+                   "-v ~/.ssh:/home/yoctouser/.ssh "
+                   "-v ~/.bash_history_docker_d11:/home/yoctouser/.bash_history "
+                   "--name yocto-debian-11 crops/yocto:debian-11-base"
     }
 ]
 
