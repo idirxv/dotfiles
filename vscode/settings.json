@@ -29,4 +29,7 @@
             "overviewRulerColor": "grey",
         },
     ],
+    "github.copilot.enable": {
+        "markdown": true
+    },
 }
