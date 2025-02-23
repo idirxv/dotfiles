@@ -12,3 +12,6 @@ zsh-syntax-highlighting https://github.com/zsh-users/zsh-syntax-highlighting/tre
 
 tmux        https://github.com/tmux/tmux
 tmux-tpm    https://github.com/tmux-plugins/tpm
+
+pyenv       https://github.com/pyenv/pyenv
+
