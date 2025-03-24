@@ -75,7 +75,8 @@ plugins=(
 	copypath
 	vscode
 	diff-so-fancy
-	)
+	tempit
+)
 
 source $ZSH/oh-my-zsh.sh
 
