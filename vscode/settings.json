@@ -32,4 +32,5 @@
     "github.copilot.enable": {
         "markdown": true
     },
+    "chat.agent.enabled": true,
 }
