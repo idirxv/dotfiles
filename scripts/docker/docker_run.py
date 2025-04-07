@@ -94,17 +94,33 @@ def run_docker_command(cmd):
     except subprocess.CalledProcessError as e:
         print(colored(f"Error executing Docker command: {e}", "red"))
 
+def show_docker_command(cmd):
+    """ Display the constructed docker command """
+    cmd = [str(Path(p).expanduser()) for p in cmd]
+    print(colored("Docker command:", "cyan"))
+    print(" ".join(cmd))
+
 def main():
     """ Main function """
     try:
         config = load_config(CONFIG_FILE)
 
         if len(sys.argv) < 2:
-            print("Usage: docker_run.py <number|image_name>")
+            print("Usage: docker_run.py <number|image_name> or docker_run.py show <number|image_name>")
             list_available_images(config)
             sys.exit(1)
 
-        selection = sys.argv[1]
+        # Check if "show" command is used
+        show_only = False
+        if sys.argv[1] == "show":
+            if len(sys.argv) < 3:
+                print("Usage: docker_run.py show <number|image_name>")
+                list_available_images(config)
+                sys.exit(1)
+            show_only = True
+            selection = sys.argv[2]
+        else:
+            selection = sys.argv[1]
 
         # Handle numeric selection
         if selection.isdigit():
@@ -125,7 +141,11 @@ def main():
                 sys.exit(1)
 
         docker_cmd = build_docker_command(config[image_name])
-        run_docker_command(docker_cmd)
+
+        if show_only:
+            show_docker_command(docker_cmd)
+        else:
+            run_docker_command(docker_cmd)
 
     except (FileNotFoundError, ValueError, subprocess.CalledProcessError) as e:
         print(colored(f"Error: {e}", "red"))
