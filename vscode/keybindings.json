@@ -81,5 +81,13 @@
         "key": "ctrl+8",
         "command": "-workbench.action.navigateForward",
         "when": "canNavigateForward"
+    },
+    {
+        "key": "ctrl+k ctrl+t",
+        "command": "-workbench.action.selectTheme"
+    },
+    {
+        "key": "ctrl+k ctrl+t",
+        "command": "workbench.action.toggleEditorWidths"
     }
 ]
