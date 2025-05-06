@@ -76,6 +76,7 @@ plugins=(
 	vscode
 	diff-so-fancy
 	tempit
+	docker-compose
 )
 
 source $ZSH/oh-my-zsh.sh
