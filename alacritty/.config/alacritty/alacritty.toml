@@ -1,0 +1,63 @@
+[cursor.style]
+blinking = "Always"
+shape = "Block"
+
+[env]
+
+[font]
+size = 11.0
+normal = { family = "FiraCodeNerdFont", style = "Regular" }
+bold = { family = "FiraCodeNerdFont", style = "Bold" }
+italic = { family = "FiraCodeNerdFont", style = "Italic" }
+
+[[keyboard.bindings]]
+action = "ScrollPageUp"
+key = "PageUp"
+mode = "~Alt"
+mods = "Shift"
+
+[[keyboard.bindings]]
+action = "ScrollPageDown"
+key = "PageDown"
+mode = "~Alt"
+mods = "Shift"
+
+[[keyboard.bindings]]
+action = "ScrollToTop"
+key = "Home"
+mode = "~Alt"
+mods = "Shift"
+
+[[keyboard.bindings]]
+action = "ScrollToBottom"
+key = "End"
+mode = "~Alt"
+mods = "Shift"
+
+[[keyboard.bindings]]
+action = "ResetFontSize"
+key = "Key0"
+mods = "Control"
+
+[[keyboard.bindings]]
+action = "IncreaseFontSize"
+key = "Plus"
+mods = "Control"
+
+[[keyboard.bindings]]
+action = "DecreaseFontSize"
+key = "Minus"
+mods = "Control"
+
+[[keyboard.bindings]]
+action = "ToggleFullscreen"
+key = "Return"
+mods = "Alt"
+
+[window]
+decorations = "none"
+opacity = 1
+
+[selection]
+semantic_escape_chars = "┤├,│`|:\"' ()[]{}<>\t"
+

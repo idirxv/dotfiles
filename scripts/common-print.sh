@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This will provide a common print function for all scripts
 
@@ -18,3 +18,4 @@ die () {
     print_red "$1"
     exit 1
 }
+
