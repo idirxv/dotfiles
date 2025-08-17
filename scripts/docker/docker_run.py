@@ -39,8 +39,9 @@ def build_docker_command(config):
 
     def add_extended_option(option, flag):
         if option in config:
+            separator = "=" if option == "env" else ":"
             for key, value in config[option].items():
-                cmd.extend([flag, f"{key}:{value}"])
+                cmd.extend([flag, f"{key}{separator}{value}"])
 
     flag_mapping = {
         "interactive": "-it",
