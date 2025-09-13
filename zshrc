@@ -18,7 +18,6 @@ plugins=(
   copypath
   vscode
   diff-so-fancy
-  tempit
   docker-compose
   zsh-syntax-highlighting
 )
@@ -52,6 +51,9 @@ eval "$(zoxide init zsh)"
 export PYENV_ROOT="${HOME}/.pyenv"
 [[ -d ${PYENV_ROOT}/bin ]] && export PATH="${PYENV_ROOT}/bin:${PATH}"
 eval "$(pyenv init - zsh)"
+
+# tempit
+eval "$(tempit -init zsh)"
 
 # Autostart tmux
 autostart_tmux_once() {
