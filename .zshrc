@@ -5,7 +5,6 @@ fi
 
 # Path to your Oh My Zsh installation.
 export ZSH="${HOME}/.oh-my-zsh"
-DOTFILES_DIR="${HOME}/dotfiles"
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
@@ -36,7 +35,7 @@ export LC_ALL=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 
 # Custom aliases
-[[ -f ${DOTFILES_DIR}/zshrc.aliases ]] && source ${DOTFILES_DIR}/zshrc.aliases
+[[ ! -f ${HOME}/.zshrc.aliases ]] || source ${HOME}/.zshrc.aliases
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ${HOME}/.p10k.zsh ]] || source ${HOME}/.p10k.zsh
