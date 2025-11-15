@@ -33,4 +33,12 @@
         "markdown": true
     },
     "chat.agent.enabled": true,
+    "ctags.disable": true,
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        }
+    },
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "editor.inlineSuggest.edits.showCollapsed": true,
 }
