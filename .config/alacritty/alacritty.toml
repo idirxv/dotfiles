@@ -1,6 +1,3 @@
-import = [
-    "~/dotfiles/alacritty-theme/themes/breeze.toml"
-]
 
 
 [cursor.style]
@@ -60,8 +57,13 @@ key = "Return"
 mods = "Alt"
 
 [window]
-decorations = "none"
+decorations = "buttonless"
 opacity = 1
 
 [selection]
 semantic_escape_chars = "┤├,│`|:\"' ()[]{}<>\t"
+
+[general]
+import = [
+    "~/.config/alacritty/alacritty-theme/themes/breeze.toml"
+]
