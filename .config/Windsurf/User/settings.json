@@ -1,0 +1,42 @@
+{
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.colorTheme": "GitHub Dark Default",
+    "workbench.editor.wrapTabs": true,
+    "workbench.colorCustomizations": {
+        "tab.activeBorderTop": "#ffffff",
+        "tab.activeBorder": "#FFFFFF"
+    },
+    "window.menuBarVisibility": "toggle",
+    "files.associations": {
+        "*.conf": "kconfig"
+    },
+    "bitbake.buildConfigurations": [],
+    "bitbake.disableEmbeddedLanguagesFiles": true,
+    "bitbake.disableConfigModification": true,
+    "bitbake.parseOnSave": false,
+    "python.analysis.experimentalserver": false,
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": "active",
+    "json.schemas": [],
+    "editor.renderWhitespace": "all",
+    "search.followSymlinks": false,
+    "todohighlight.keywords": [
+        {
+            "text": "NOTE:",
+            "color": "#ff0000",
+            "backgroundColor": "white",
+            "overviewRulerColor": "grey",
+        },
+    ],
+    "chat.agent.enabled": true,
+    "clangd.path": "~/.config/Windsurf/User/globalStorage/kylinideteam.kylin-clangd/install/19.1.2/clangd_19.1.2/bin/clangd",
+    "editor.minimap.size": "fit",
+    "editor.minimap.renderCharacters": false,
+    "editor.minimap.enabled": false,
+    "ctags.disable": true,
+    "todohighlight.keywordsPattern": "TODO FIXME",
+    "git.openRepositoryInParentFolders": "never",
+    "remote.autoForwardPortsSource": "hybrid",
+    "bitbake.disableDevtoolDebugBuild": true,
+    "database-client.autoSync": true,
+}
