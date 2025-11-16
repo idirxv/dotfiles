@@ -1,0 +1,65 @@
+#!/bin/bash
+
+set -euo pipefail
+
+echo "=== Bootstrap yadm ==="
+
+# Update packages
+echo "Installing packages"
+
+packages=(
+    # Shell and terminal
+    "tmux" "vim" "zsh"
+    # Base tools
+    "curl" "git" "htop" "meld" "rsync" "tree" "unzip" "wget" "xclip"
+    # python and pyenv dependencies
+    "python3" "python3-pip"
+    "libbz2-dev" "libffi-dev" "libreadline-dev" "libsqlite3-dev" "liblzma-dev" "libssl-dev"
+    # Misc
+    "arp-scan" "build-essential" "fontconfig" "gparted" "libevent-dev"
+    "libfontconfig1-dev" "libncurses5-dev" "minicom" "pkg-config" "wireguard"
+)
+
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y "${packages[@]}"
+
+# Install oh-my-zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
+chsh -s $(which zsh)
+
+# oh-my-zsh plugins
+git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+git clone --depth 1 https://github.com/so-fancy/diff-so-fancy.git ~/.oh-my-zsh/custom/plugins/diff-so-fancy
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
+
+# Install rust and cargo
+curl https://sh.rustup.rs -sSf | sh -s -- -y
+
+# Install lazygit
+LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
+curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+tar xf lazygit.tar.gz lazygit && rm lazygit.tar.gz
+sudo install lazygit -D -t /usr/local/bin/ && rm lazygit
+
+# Install fzf
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install --key-bindings --completion --no-update-rc
+
+# Install tmux plugins
+git clone --depth 1 https://github.com/tmux-plugins/tpm.git ~/.tmux/plugins/tpm
+~/.tmux/plugins/tpm/bin/install_plugins
+
+# Install cargo packages
+PATH="${HOME}/.cargo/bin:${PATH}"
+cargo_packages=(
+    "alacritty"
+    "bat"
+    "cargo-update"
+    "fd-find"
+    "http-server"
+    "lsd"
+    "ripgrep"
+    "zoxide"
+)
+cargo install "${cargo_packages[@]}"
+
