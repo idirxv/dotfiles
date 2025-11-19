@@ -7,10 +7,10 @@ shape = "Block"
 [env]
 
 [font]
-size = 11.0
-normal = { family = "FiraCodeNerdFont", style = "Regular" }
-bold = { family = "FiraCodeNerdFont", style = "Bold" }
-italic = { family = "FiraCodeNerdFont", style = "Italic" }
+size = 12.0
+normal = { family = "JetBrainsMonoNerdFont", style = "Regular" }
+bold = { family = "JetBrainsMonoNerdFont", style = "Bold" }
+italic = { family = "JetBrainsMonoNerdFont", style = "Italic" }
 
 [[keyboard.bindings]]
 action = "ScrollPageUp"
@@ -58,7 +58,7 @@ mods = "Alt"
 
 [window]
 decorations = "buttonless"
-opacity = 1
+opacity = 0.9
 
 [selection]
 semantic_escape_chars = "┤├,│`|:\"' ()[]{}<>\t"
