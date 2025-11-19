@@ -66,3 +66,10 @@ cargo install "${cargo_packages[@]}"
 # alacritty theme
 git clone --depth 1 https://github.com/alacritty/alacritty-theme.git ~/.config/alacritty/alacritty-theme
 
+# Download and install FiraCode font
+mkdir -p ~/.local/share/fonts
+curl -L https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/FiraCode.zip -o /tmp/FiraCode.zip
+unzip -j /tmp/FiraCode.zip "*.ttf" -d ~/.local/share/fonts
+# Update font cache
+fc-cache -fv
+
