@@ -63,3 +63,6 @@ cargo_packages=(
 )
 cargo install "${cargo_packages[@]}"
 
+# alacritty theme
+git clone --depth 1 https://github.com/alacritty/alacritty-theme.git ~/.config/alacritty/alacritty-theme
+
