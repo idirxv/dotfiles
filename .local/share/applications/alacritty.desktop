@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Alacritty
+GenericName=Terminal Emulator
+Comment=Terminal emulator
+Exec=$HOME/.cargo/bin/alacritty
+Terminal=false
+Type=Application
+Icon=alacritty
+Categories=System;TerminalEmulator;
