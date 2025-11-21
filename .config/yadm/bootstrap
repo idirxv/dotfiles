@@ -73,3 +73,15 @@ unzip -j /tmp/FiraCode.zip "*.ttf" -d ~/.local/share/fonts
 # Update font cache
 fc-cache -fv
 
+# Install pyenv
+curl -fsSL https://pyenv.run | bash
+
+# Temporary init pyenv to install python and pip
+PATH=${HOME}/.pyenv/bin:${PATH}
+eval "$(pyenv init - bash)"
+pyenv install 3.12.11
+pyenv global 3.12.11
+
+# Install pip packages
+pip install --upgrade pip
+pip install --user tempit-manager
