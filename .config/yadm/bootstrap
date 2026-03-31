@@ -2,86 +2,294 @@
 
 set -euo pipefail
 
+# -- Helpers ------------------------------------------------------------------
+
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+CYAN='\033[0;36m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+info()    { echo -e "${CYAN}:: ${NC}$*"; }
+success() { echo -e "${GREEN}:: ${NC}$*"; }
+warn()    { echo -e "${YELLOW}:: ${NC}$*"; }
+error()   { echo -e "${RED}:: ${NC}$*"; }
+
+# Prompt user for confirmation. Returns 0 (yes) or 1 (skip).
+confirm() {
+    local prompt="${1:-Continue?}"
+    echo -en "${YELLOW}:: ${prompt} [Y/n] ${NC}"
+    read -r reply
+    [[ -z "$reply" || "$reply" =~ ^[Yy]$ ]]
+}
+
+# Detect distro family
+detect_distro() {
+    if [[ -f /etc/os-release ]]; then
+        . /etc/os-release
+        case "$ID" in
+            arch|endeavouros|manjaro|cachyos|garuda) echo "arch" ;;
+            debian|ubuntu|pop|mint|elementary|zorin)  echo "debian" ;;
+            *)
+                case "${ID_LIKE:-}" in
+                    *arch*)   echo "arch" ;;
+                    *debian*) echo "debian" ;;
+                    *)        echo "unknown" ;;
+                esac
+                ;;
+        esac
+    else
+        echo "unknown"
+    fi
+}
+
+pkg_install() {
+    case "$DISTRO" in
+        arch)   sudo pacman -S --needed --noconfirm "$@" ;;
+        debian) sudo apt install -y "$@" ;;
+    esac
+}
+
+pkg_update() {
+    case "$DISTRO" in
+        arch)   sudo pacman -Syu --noconfirm ;;
+        debian) sudo apt update && sudo apt upgrade -y ;;
+    esac
+}
+
+ensure_cargo() {
+    if command -v cargo &>/dev/null; then
+        return 0
+    fi
+    case "$DISTRO" in
+        arch)
+            pkg_install rust
+            ;;
+        debian)
+            curl https://sh.rustup.rs -sSf | sh -s -- -y
+            # shellcheck source=/dev/null
+            source "${HOME}/.cargo/env"
+            ;;
+    esac
+}
+
+# -- Main ---------------------------------------------------------------------
+
 echo "=== Bootstrap yadm ==="
 
-# Update packages
-echo "Installing packages"
+DISTRO=$(detect_distro)
+if [[ "$DISTRO" == "unknown" ]]; then
+    error "Unsupported distro. This script supports Arch-based and Debian-based systems."
+    exit 1
+fi
 
-packages=(
-    # Shell and terminal
-    "tmux" "vim" "zsh"
-    # Base tools
-    "curl" "git" "htop" "meld" "rsync" "tree" "unzip" "wget" "xclip"
-    # python and pyenv dependencies
-    "python3" "python3-pip"
-    "libbz2-dev" "libffi-dev" "libreadline-dev" "libsqlite3-dev" "liblzma-dev" "libssl-dev"
-    # Misc
-    "arp-scan" "build-essential" "fontconfig" "gparted" "libevent-dev"
-    "libfontconfig1-dev" "libncurses5-dev" "minicom" "pkg-config" "wireguard"
-)
+success "Detected: $DISTRO"
 
-sudo apt update && sudo apt upgrade -y
-sudo apt install -y "${packages[@]}"
+# -- System update ------------------------------------------------------------
 
-# Install oh-my-zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
-chsh -s $(which zsh)
+if confirm "Update system packages?"; then
+    pkg_update
+    success "System updated"
+fi
 
-# oh-my-zsh plugins
-git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-git clone --depth 1 https://github.com/so-fancy/diff-so-fancy.git ~/.oh-my-zsh/custom/plugins/diff-so-fancy
-git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
+# -- Base packages ------------------------------------------------------------
 
-# Install rust and cargo
-curl https://sh.rustup.rs -sSf | sh -s -- -y
+if confirm "Install base packages (curl, git, htop, vim, zsh, tmux, etc.)?"; then
+    case "$DISTRO" in
+        arch)
+            pkg_install base-devel fontconfig \
+                curl git htop meld rsync tree unzip wget xclip \
+                tmux vim zsh
+            ;;
+        debian)
+            pkg_install build-essential fontconfig \
+                curl git htop meld rsync tree unzip wget xclip \
+                tmux vim zsh
+            ;;
+    esac
+    success "Base packages installed"
+fi
 
-# Install lazygit
-LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
-curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
-tar xf lazygit.tar.gz lazygit && rm lazygit.tar.gz
-sudo install lazygit -D -t /usr/local/bin/ && rm lazygit
+# -- Shell: Prezto + Starship -------------------------------------------------
 
-# Install fzf
-git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-~/.fzf/install --key-bindings --completion --no-update-rc
+if confirm "Install prezto + starship (zsh framework & prompt)?"; then
+    # Prezto
+    if [[ ! -d "${ZDOTDIR:-$HOME}/.zprezto" ]]; then
+        git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
+        success "Prezto installed"
+    else
+        warn "Prezto already installed, skipping"
+    fi
 
-# Install tmux plugins
-git clone --depth 1 https://github.com/tmux-plugins/tpm.git ~/.tmux/plugins/tpm
-~/.tmux/plugins/tpm/bin/install_plugins
+    # Set zsh as default shell
+    if [[ "$(basename "$SHELL")" != "zsh" ]]; then
+        chsh -s "$(which zsh)"
+        success "Default shell changed to zsh"
+    fi
 
-# Install cargo packages
-PATH="${HOME}/.cargo/bin:${PATH}"
-cargo_packages=(
-    "alacritty"
-    "bat"
-    "cargo-update"
-    "fd-find"
-    "http-server"
-    "lsd"
-    "ripgrep"
-    "zoxide"
-)
-cargo install "${cargo_packages[@]}"
+    # Starship
+    case "$DISTRO" in
+        arch)   pkg_install starship ;;
+        debian) curl -sS https://starship.rs/install.sh | sh ;;
+    esac
+    success "Starship installed"
+fi
 
-# alacritty theme
-git clone --depth 1 https://github.com/alacritty/alacritty-theme.git ~/.config/alacritty/alacritty-theme
+# -- FiraCode Nerd Font -------------------------------------------------------
+# Install font before terminal — needed for proper glyph rendering
 
-# Download and install FiraCode font
-mkdir -p ~/.local/share/fonts
-curl -L https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/FiraCode.zip -o /tmp/FiraCode.zip
-unzip -j /tmp/FiraCode.zip "*.ttf" -d ~/.local/share/fonts
-# Update font cache
-fc-cache -fv
+if confirm "Install FiraCode Nerd Font?"; then
+    case "$DISTRO" in
+        arch)
+            pkg_install ttf-firacode-nerd
+            ;;
+        debian)
+            mkdir -p ~/.local/share/fonts
+            FONT_VERSION="3.4.0"
+            curl -Lo /tmp/FiraCode.zip \
+                "https://github.com/ryanoasis/nerd-fonts/releases/download/v${FONT_VERSION}/FiraCode.zip"
+            unzip -o -j /tmp/FiraCode.zip "*.ttf" -d ~/.local/share/fonts
+            rm /tmp/FiraCode.zip
+            fc-cache -fv
+            ;;
+    esac
+    success "FiraCode Nerd Font installed"
+fi
 
-# Install pyenv
-curl -fsSL https://pyenv.run | bash
+# -- Terminal: Alacritty ------------------------------------------------------
 
-# Temporary init pyenv to install python and pip
-PATH=${HOME}/.pyenv/bin:${PATH}
-eval "$(pyenv init - bash)"
-pyenv install 3.12.11
-pyenv global 3.12.11
+if confirm "Install Alacritty terminal + theme?"; then
+    # Alacritty
+    case "$DISTRO" in
+        arch)
+            pkg_install alacritty
+            ;;
+        debian)
+            ensure_cargo
+            cargo install alacritty
+            ;;
+    esac
 
-# Install pip packages
-pip install --upgrade pip
-pip install --user tempit-manager
+    # Alacritty theme
+    if [[ ! -d ~/.config/alacritty/alacritty-theme ]]; then
+        git clone --depth 1 https://github.com/alacritty/alacritty-theme.git \
+            ~/.config/alacritty/alacritty-theme
+        success "Alacritty theme installed"
+    else
+        warn "Alacritty theme already present, skipping"
+    fi
+
+    success "Alacritty installed"
+fi
+
+# -- CLI tools ----------------------------------------------------------------
+# Arch: all available via pacman
+# Debian: some need cargo or manual install
+
+if confirm "Install CLI tools (bat, fd, fzf, lsd, ripgrep, zoxide, lazygit)?"; then
+    case "$DISTRO" in
+        arch)
+            pkg_install bat fd fzf lsd ripgrep zoxide lazygit
+            ;;
+        debian)
+            pkg_install bat fd-find fzf ripgrep
+
+            # lsd, zoxide — not in apt, use cargo
+            ensure_cargo
+            cargo install lsd zoxide
+
+            # lazygit — not in apt, install from GitHub release
+            if ! command -v lazygit &>/dev/null; then
+                info "Installing lazygit from GitHub..."
+                LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" \
+                    | \grep -Po '"tag_name": *"v\K[^"]*')
+                curl -Lo /tmp/lazygit.tar.gz \
+                    "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+                tar xf /tmp/lazygit.tar.gz -C /tmp lazygit
+                sudo install /tmp/lazygit -D -t /usr/local/bin/
+                rm /tmp/lazygit /tmp/lazygit.tar.gz
+            else
+                warn "lazygit already installed, skipping"
+            fi
+            ;;
+    esac
+    success "CLI tools installed"
+fi
+
+# -- Tmux plugins -------------------------------------------------------------
+
+if confirm "Install tmux plugins (TPM)?"; then
+    if [[ ! -d ~/.tmux/plugins/tpm ]]; then
+        git clone --depth 1 https://github.com/tmux-plugins/tpm.git ~/.tmux/plugins/tpm
+        success "TPM installed"
+    else
+        warn "TPM already installed"
+    fi
+    info "Installing tmux plugins..."
+    ~/.tmux/plugins/tpm/bin/install_plugins
+    success "Tmux plugins installed"
+fi
+
+# -- Rust & cargo packages ----------------------------------------------------
+
+if confirm "Install cargo packages (http-server, cargo-update)?"; then
+    ensure_cargo
+    cargo install cargo-update http-server
+    success "Cargo packages installed"
+fi
+
+# -- Python (pyenv) -----------------------------------------------------------
+
+if confirm "Install pyenv (Python 3.12) ?"; then
+    # pyenv build dependencies
+    case "$DISTRO" in
+        arch)   pkg_install base-devel openssl zlib xz tk sqlite bzip2 readline libffi ;;
+        debian) pkg_install build-essential libssl-dev zlib1g-dev libbz2-dev \
+                            libreadline-dev libsqlite3-dev liblzma-dev libffi-dev tk-dev ;;
+    esac
+
+    # pyenv
+    if [[ ! -d "${HOME}/.pyenv" ]]; then
+        curl -fsSL https://pyenv.run | bash
+        success "pyenv installed"
+    else
+        warn "pyenv already installed, skipping"
+    fi
+
+    export PYENV_ROOT="${HOME}/.pyenv"
+    [[ -d "${PYENV_ROOT}/bin" ]] && export PATH="${PYENV_ROOT}/bin:${PATH}"
+    eval "$(pyenv init -)"
+
+    # Python
+    PYTHON_VERSION="3.12.12"
+    if ! pyenv versions --bare | grep -qF "$PYTHON_VERSION"; then
+        info "Installing Python ${PYTHON_VERSION}..."
+        pyenv install "$PYTHON_VERSION"
+    else
+        warn "Python ${PYTHON_VERSION} already installed"
+    fi
+    pyenv global "$PYTHON_VERSION"
+    success "Python ${PYTHON_VERSION} set as global"
+fi
+
+if confirm "Install pip packages (tempit) ?"; then
+    # Pip packages
+    pip install --upgrade pip
+    pip install --user tempit-manager
+    success "Pip packages installed"
+fi
+
+# -- Networking & hardware tools ----------------------------------------------
+
+if confirm "Install networking tools (arp-scan, minicom, wireguard, gparted)?"; then
+    case "$DISTRO" in
+        arch)   pkg_install arp-scan gparted libevent minicom pkgconf wireguard-tools ;;
+        debian) pkg_install arp-scan gparted libevent-dev minicom pkg-config wireguard ;;
+    esac
+    success "Networking tools installed"
+fi
+
+# -- Done ---------------------------------------------------------------------
+
+echo ""
+success "Bootstrap complete!"
