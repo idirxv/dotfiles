@@ -1,31 +1,14 @@
-# Powerlevel10k instant prompt
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+#
+# Executes commands at the start of an interactive session.
+#
+
+# Source Prezto.
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
-
-# Path to your Oh My Zsh installation.
-export ZSH="${HOME}/.oh-my-zsh"
-
-ZSH_THEME="powerlevel10k/powerlevel10k"
-
-# Plugins
-plugins=(
-  git
-  fzf
-  dirhistory
-  copybuffer
-  copypath
-  vscode
-  diff-so-fancy
-  docker-compose
-  zsh-syntax-highlighting
-)
-
-source ${ZSH}/oh-my-zsh.sh
 
 # User configuration
 export PATH="${HOME}/.cargo/bin:${PATH}"
-export PATH="${PATH}:/opt/nvim-linux64/bin"
 export PATH="${PATH}:${HOME}/.local/bin"
 export PATH="${PATH}:${HOME}/.npm-global/bin"
 
@@ -37,11 +20,11 @@ export LC_CTYPE=en_US.UTF-8
 # Custom aliases
 [[ ! -f ${HOME}/.zshrc.aliases ]] || source ${HOME}/.zshrc.aliases
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ${HOME}/.p10k.zsh ]] || source ${HOME}/.p10k.zsh
-
 # fzf
 [[ -f ${HOME}/.fzf.zsh ]] && source ${HOME}/.fzf.zsh
+
+# starship
+eval "$(starship init zsh)"
 
 # zoxide
 eval "$(zoxide init zsh)"
@@ -52,14 +35,4 @@ export PYENV_ROOT="${HOME}/.pyenv"
 eval "$(pyenv init - zsh)"
 
 # tempit
-eval "$(tempit -init zsh)"
-
-# Autostart tmux
-autostart_tmux_once() {
-  # Do nothing if already in tmux, non-interactive shell, or no TTY
-  [[ -n ${TMUX} || $- != *i* || ! -t 1 ]] && return
-
-  # Replace shell by tmux
-  exec tmux new-session -A -s default
-}
-precmd_functions+=autostart_tmux_once
+# eval "$(tempit -init zsh)"
