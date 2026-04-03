@@ -19,6 +19,7 @@ export LC_CTYPE=en_US.UTF-8
 
 # Custom aliases
 [[ ! -f ${HOME}/.zshrc.aliases ]] || source ${HOME}/.zshrc.aliases
+[[ ! -f ${HOME}/.omz-git.plugin.zsh ]] || source ${HOME}/.omz-git.plugin.zsh
 
 # fzf
 [[ -f ${HOME}/.fzf.zsh ]] && source ${HOME}/.fzf.zsh
@@ -29,10 +30,13 @@ eval "$(starship init zsh)"
 # zoxide
 eval "$(zoxide init zsh)"
 
+# fzf
+eval "$(fzf --zsh)"
+
 # pyenv
 export PYENV_ROOT="${HOME}/.pyenv"
 [[ -d ${PYENV_ROOT}/bin ]] && export PATH="${PYENV_ROOT}/bin:${PATH}"
 eval "$(pyenv init - zsh)"
 
 # tempit
-# eval "$(tempit -init zsh)"
+eval "$(tempit init zsh)"
