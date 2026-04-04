@@ -1,0 +1,84 @@
+name: Test Yadm Bootstrap
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    # Ubuntu: prevent apt from hanging on interactive prompts
+    env:
+      DEBIAN_FRONTEND: noninteractive
+
+    strategy:
+      fail-fast: false
+      matrix:
+        distro: [ubuntu, arch]
+        include:
+          - distro: ubuntu
+            image: ubuntu:latest
+          - distro: arch
+            image: archlinux:latest
+
+    name: Bootstrap (${{ matrix.distro }})
+    container:
+      image: ${{ matrix.image }}
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Install prerequisites
+        run: |
+          if command -v pacman &>/dev/null; then
+            pacman -Syu --noconfirm git sudo zsh curl ca-certificates
+          else
+            apt-get update && apt-get install -y git sudo zsh curl ca-certificates
+          fi
+
+      - name: Create test user
+        run: |
+          useradd -m -s /bin/zsh testuser
+          echo 'testuser ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/testuser
+          chmod 0440 /etc/sudoers.d/testuser
+
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Copy dotfiles to home
+        run: |
+          cp -a "$GITHUB_WORKSPACE/." /home/testuser/
+          chown -R testuser:testuser /home/testuser
+
+      - name: Run bootstrap
+        run: |
+          su -l testuser -c 'bash /home/testuser/.config/yadm/bootstrap --yes'
+
+      - name: Verify key tools installed
+        run: |
+          su -l testuser -c '
+            export PATH="$HOME/.pyenv/bin:$HOME/.pyenv/shims:$HOME/.cargo/bin:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin"
+            failed=0
+
+            check() {
+              if command -v "$1" &>/dev/null; then
+                printf "%-14s %s\n" "$1" "$("$1" --version 2>&1 | head -1)"
+                return 0
+              fi
+              return 1
+            }
+
+            for tool in zsh tmux git vim starship fzf rg lazygit lsd zoxide \
+                         pyenv python alacritty cargo http-server tempit; do
+              check "$tool" || { echo "MISSING: $tool"; failed=1; }
+            done
+
+            # Debian uses batcat/fdfind, Arch uses bat/fd
+            check bat || check batcat || { echo "MISSING: bat"; failed=1; }
+            check fd  || check fdfind || { echo "MISSING: fd"; failed=1; }
+
+            exit $failed
+          '
