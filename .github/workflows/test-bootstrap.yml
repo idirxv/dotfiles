@@ -1,0 +1,89 @@
+name: Test Yadm Bootstrap
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    # Ubuntu: prevent apt from hanging on interactive prompts
+    env:
+      DEBIAN_FRONTEND: noninteractive 
+      
+    strategy:
+      fail-fast: false
+      matrix:
+        distro: [ubuntu, arch]
+        include:
+          - distro: ubuntu
+            image: ubuntu:latest
+          - distro: arch
+            image: archlinux:latest
+
+    name: Bootstrap (${{ matrix.distro }})
+    container:
+      image: ${{ matrix.image }}
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Install prerequisites
+        run: |
+          if command -v pacman &>/dev/null; then
+            pacman -Syu --noconfirm git sudo zsh curl ca-certificates
+          else
+            apt-get update && apt-get install -y git sudo zsh curl ca-certificates
+          fi
+
+      - name: Create test user
+        run: |
+          useradd -m -s /bin/zsh testuser
+          echo 'testuser ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/testuser
+          chmod 0440 /etc/sudoers.d/testuser
+
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Copy dotfiles to home
+        run: |
+          cp -a "$GITHUB_WORKSPACE/." /home/testuser/
+          chown -R testuser:testuser /home/testuser
+
+      - name: Run bootstrap
+        run: |
+          su -l testuser -c 'bash /home/testuser/.config/yadm/bootstrap --yes'
+
+      - name: Verify key tools installed
+        run: |
+          su -l testuser -c '
+            # Include Pyenv, Pyenv shims, and Cargo paths
+            export PATH="$HOME/.pyenv/bin:$HOME/.pyenv/shims:$HOME/.cargo/bin:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin"
+            set -e
+            echo "Checking installed tools..."
+            
+            # Expanded list to cover cargo, pip, and networking tools installed in bootstrap
+            for tool in zsh tmux git starship fzf rg lazygit lsd zoxide pyenv alacritty cargo http-server tempit; do
+              if ! command -v "$tool" &> /dev/null; then
+                echo "❌ Missing: $tool"
+                exit 1
+              fi
+            done
+            
+            # Handle bat/batcat
+            if ! command -v bat &> /dev/null && ! command -v batcat &> /dev/null; then
+              echo "❌ Missing: bat/batcat"
+              exit 1
+            fi
+
+            # Handle fd/fdfind
+            if ! command -v fd &> /dev/null && ! command -v fdfind &> /dev/null; then
+              echo "❌ Missing: fd/fdfind"
+              exit 1
+            fi
+            
+            echo "✅ All key tools verified!"
+          '
