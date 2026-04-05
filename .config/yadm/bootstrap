@@ -2,6 +2,16 @@
 
 set -euo pipefail
 
+# -- Options ------------------------------------------------------------------
+
+AUTO_YES=false
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -y|--yes) AUTO_YES=true; shift ;;
+        *) echo "Unknown option: $1"; exit 1 ;;
+    esac
+done
+
 # -- Helpers ------------------------------------------------------------------
 
 GREEN='\033[0;32m'
@@ -17,6 +27,7 @@ error()   { echo -e "${RED}:: ${NC}$*"; }
 
 # Prompt user for confirmation. Returns 0 (yes) or 1 (skip).
 confirm() {
+    if $AUTO_YES; then return 0; fi
     local prompt="${1:-Continue?}"
     echo -en "${YELLOW}:: ${prompt} [Y/n] ${NC}"
     read -r reply
@@ -67,7 +78,6 @@ ensure_cargo() {
             ;;
         debian)
             curl https://sh.rustup.rs -sSf | sh -s -- -y
-            # shellcheck source=/dev/null
             source "${HOME}/.cargo/env"
             ;;
     esac
@@ -102,9 +112,9 @@ if confirm "Install base packages (curl, git, htop, vim, zsh, tmux, etc.)?"; the
                 tmux vim zsh
             ;;
         debian)
-            pkg_install build-essential fontconfig \
-                curl git htop meld rsync tree unzip wget xclip \
-                tmux vim zsh
+            pkg_install build-essential cmake curl fontconfig git \
+                 htop libssl-dev meld pkg-config rsync tmux tree \
+                 unzip vim wget xclip zlib1g-dev zsh
             ;;
     esac
     success "Base packages installed"
@@ -130,7 +140,7 @@ if confirm "Install prezto + starship (zsh framework & prompt)?"; then
     # Starship
     case "$DISTRO" in
         arch)   pkg_install starship ;;
-        debian) curl -sS https://starship.rs/install.sh | sh ;;
+        debian) ensure_cargo && cargo install starship ;;
     esac
     success "Starship installed"
 fi
@@ -144,12 +154,8 @@ if confirm "Install FiraCode Nerd Font?"; then
             pkg_install ttf-firacode-nerd
             ;;
         debian)
-            mkdir -p ~/.local/share/fonts
-            FONT_VERSION="3.4.0"
-            curl -Lo /tmp/FiraCode.zip \
-                "https://github.com/ryanoasis/nerd-fonts/releases/download/v${FONT_VERSION}/FiraCode.zip"
-            unzip -o -j /tmp/FiraCode.zip "*.ttf" -d ~/.local/share/fonts
-            rm /tmp/FiraCode.zip
+            mkdir -p ~/.local/share/fonts/FiraCode
+            curl -fsSL "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/FiraCode.tar.xz" | tar -xJ -C ~/.local/share/fonts/FiraCode
             fc-cache -fv
             ;;
     esac
@@ -160,15 +166,7 @@ fi
 
 if confirm "Install Alacritty terminal + theme?"; then
     # Alacritty
-    case "$DISTRO" in
-        arch)
-            pkg_install alacritty
-            ;;
-        debian)
-            ensure_cargo
-            cargo install alacritty
-            ;;
-    esac
+    pkg_install alacritty
 
     # Alacritty theme
     if [[ ! -d ~/.config/alacritty/alacritty-theme ]]; then
@@ -192,25 +190,13 @@ if confirm "Install CLI tools (bat, fd, fzf, lsd, ripgrep, zoxide, lazygit)?"; t
             pkg_install bat fd fzf lsd ripgrep zoxide lazygit
             ;;
         debian)
-            pkg_install bat fd-find fzf ripgrep
-
-            # lsd, zoxide — not in apt, use cargo
-            ensure_cargo
-            cargo install lsd zoxide
-
-            # lazygit — not in apt, install from GitHub release
-            if ! command -v lazygit &>/dev/null; then
-                info "Installing lazygit from GitHub..."
-                LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" \
-                    | \grep -Po '"tag_name": *"v\K[^"]*')
-                curl -Lo /tmp/lazygit.tar.gz \
-                    "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
-                tar xf /tmp/lazygit.tar.gz -C /tmp lazygit
-                sudo install /tmp/lazygit -D -t /usr/local/bin/
-                rm /tmp/lazygit /tmp/lazygit.tar.gz
-            else
-                warn "lazygit already installed, skipping"
-            fi
+            pkg_install bat fd-find fzf lsd ripgrep zoxide
+            # lazygit
+            LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
+            LAZYGIT_ARCH=$(uname -m | sed -e 's/aarch64/arm64/')
+            curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_${LAZYGIT_ARCH}.tar.gz"
+            tar xf lazygit.tar.gz lazygit
+            sudo install lazygit -D -t /usr/local/bin/
             ;;
     esac
     success "CLI tools installed"
@@ -244,8 +230,7 @@ if confirm "Install pyenv (Python 3.12) ?"; then
     # pyenv build dependencies
     case "$DISTRO" in
         arch)   pkg_install base-devel openssl zlib xz tk sqlite bzip2 readline libffi ;;
-        debian) pkg_install build-essential libssl-dev zlib1g-dev libbz2-dev \
-                            libreadline-dev libsqlite3-dev liblzma-dev libffi-dev tk-dev ;;
+        debian) pkg_install libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev libffi-dev tk-dev ;;
     esac
 
     # pyenv
@@ -284,7 +269,7 @@ fi
 if confirm "Install networking tools (arp-scan, minicom, wireguard, gparted)?"; then
     case "$DISTRO" in
         arch)   pkg_install arp-scan gparted libevent minicom pkgconf wireguard-tools ;;
-        debian) pkg_install arp-scan gparted libevent-dev minicom pkg-config wireguard ;;
+        debian) pkg_install arp-scan gparted libevent-dev minicom wireguard ;;
     esac
     success "Networking tools installed"
 fi
