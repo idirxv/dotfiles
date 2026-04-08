@@ -2,6 +2,16 @@
 
 set -euo pipefail
 
+# -- Options ------------------------------------------------------------------
+
+AUTO_YES=false
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -y|--yes) AUTO_YES=true; shift ;;
+        *) echo "Unknown option: $1"; exit 1 ;;
+    esac
+done
+
 # -- Helpers ------------------------------------------------------------------
 
 GREEN='\033[0;32m'
@@ -17,6 +27,7 @@ error()   { echo -e "${RED}:: ${NC}$*"; }
 
 # Prompt user for confirmation. Returns 0 (yes) or 1 (skip).
 confirm() {
+    if $AUTO_YES; then return 0; fi
     local prompt="${1:-Continue?}"
     echo -en "${YELLOW}:: ${prompt} [Y/n] ${NC}"
     read -r reply
