@@ -20,6 +20,7 @@ export LC_CTYPE=en_US.UTF-8
 # Custom aliases
 [[ ! -f ${HOME}/.zshrc.aliases ]] || source ${HOME}/.zshrc.aliases
 [[ ! -f ${HOME}/.omz-git.plugin.zsh ]] || source ${HOME}/.omz-git.plugin.zsh
+[[ ! -f ${HOME}/.omz-vscode.plugin.zsh ]] || source ${HOME}/.omz-vscode.plugin.zsh
 
 # fzf
 [[ -f ${HOME}/.fzf.zsh ]] && source ${HOME}/.fzf.zsh
