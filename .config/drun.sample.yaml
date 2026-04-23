@@ -1,0 +1,12 @@
+containers:
+  <container_name>:
+    image: <image>:<tag>
+    rm: true|false
+    interactive: true|false
+    env-file: <path_to_env_file>
+    volumes:
+      - host: <host_path>
+        container: <container_path>
+      - host: <host_path>
+        container: <container_path>:<options>
+    workdir: <container_workdir>
