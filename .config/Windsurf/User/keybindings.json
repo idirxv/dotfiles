@@ -89,5 +89,15 @@
     {
         "key": "ctrl+k ctrl+t",
         "command": "workbench.action.toggleEditorWidths"
+    },
+    {
+        "key": "ctrl+g",
+        "command": "-workbench.action.toggleWindsurfAgentWindow",
+        "when": "!findInputFocussed && !findWidgetVisible && !isAgentSessionsWorkspace && !terminalFindVisible"
+    },
+    {
+        "key": "ctrl+alt+k",
+        "command": "-claude-code.insertAtMentioned",
+        "when": "editorTextFocus"
     }
 ]
