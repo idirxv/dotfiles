@@ -41,6 +41,7 @@ zstyle ':prezto:load' pmodule \
   'tmux' \
   'syntax-highlighting' \
   'dir-nav' \
+  'copybuffer' \
   'history-substring-search'
 
 #
