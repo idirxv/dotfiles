@@ -107,12 +107,12 @@ fi
 if confirm "Install base packages (curl, git, htop, vim, zsh, tmux, etc.)?"; then
     case "$DISTRO" in
         arch)
-            pkg_install base-devel fontconfig openssl pkgconf \
+            pkg_install base-devel bc fontconfig openssl pkgconf \
                 curl git htop meld rsync tree unzip wget wl-clipboard xclip \
                 tmux vim zsh
             ;;
         debian)
-            pkg_install build-essential fontconfig libfontconfig1-dev libssl-dev pkg-config \
+            pkg_install bc build-essential fontconfig libfontconfig1-dev libssl-dev pkg-config \
                 curl git htop meld rsync tree unzip wget wl-clipboard xclip \
                 cmake tmux vim zsh
             ;;

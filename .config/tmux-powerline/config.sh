@@ -199,9 +199,9 @@
 
 # lan_ip.sh {
 	# Symbol for LAN IP.
-	# export TMUX_POWERLINE_SEG_LAN_IP_SYMBOL="ⓛ "
+	export TMUX_POWERLINE_SEG_LAN_IP_SYMBOL="󰩠 "
 	# Symbol colour for LAN IP
-	# export TMUX_POWERLINE_SEG_LAN_IP_SYMBOL_COLOUR="255"
+	export TMUX_POWERLINE_SEG_LAN_IP_SYMBOL_COLOUR="255"
 # }
 
 # macos_notification_count.sh {
@@ -242,7 +242,7 @@
 
 # mem_used.sh {
 	# Memory icon
-	export TMUX_POWERLINE_SEG_MEM_USED_ICON=" "
+	export TMUX_POWERLINE_SEG_MEM_USED_ICON="󰘚 "
 	# Measure unit of memory: "GB" or "MB".
 	# In context of this segment "1 GB" equals "2 ^ 30 bytes" and "1 MB" eqauls "2 ^ 20 bytes".
 	export TMUX_POWERLINE_SEG_MEM_USED_UNIT="GB"
