@@ -2,6 +2,8 @@
 
 add_newline = false
 
+continuation_prompt = '[▶▶](bright-black) '
+
 [character]
 success_symbol = '[❯](bold green)'
 error_symbol = '[❯](bold red)'
@@ -14,9 +16,11 @@ truncation_length = 0
 truncate_to_repo = false
 
 [git_branch]
-symbol = " "
+symbol = ""
 style = "bold purple"
 format = 'on [$symbol$branch(:$remote_branch)]($style) '
+truncation_length = 30
+truncation_symbol = "…"
 
 [git_status]
 conflicted = "="
@@ -28,18 +32,29 @@ stashed = "[*](bold white)"
 modified = "[!](bold yellow)"
 staged = '[+${count}](bold green)'
 deleted = "[-](bold red)"
+renamed = "[r](bold yellow)"
+
+[status]
+format = '[$symbol$status]($style) '
+symbol = "✘ "
+style = "bold red"
+disabled = false
 
 [cmd_duration]
 min_time = 2_000
 format = 'took [$duration](bold yellow)'
 
 [rust]
-symbol = ""
+disabled = true
 
 [python]
 disabled = true
-symbol = " "
-format = '[${symbol}${pyenv_prefix}(${version})(\($virtualenv\))]($style) '
 
 [package]
+disabled = true
+
+[cmake]
+disabled = true
+
+[php]
 disabled = true
