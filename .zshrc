@@ -2,6 +2,11 @@
 # Executes commands at the start of an interactive session.
 #
 
+# Enable Powerlevel10k instant prompt. Must stay at top of .zshrc.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
@@ -25,9 +30,6 @@ export LC_CTYPE=en_US.UTF-8
 # fzf
 [[ -f ${HOME}/.fzf.zsh ]] && source ${HOME}/.fzf.zsh
 
-# starship
-eval "$(starship init zsh)"
-
 # zoxide
 eval "$(zoxide init zsh)"
 
@@ -41,3 +43,8 @@ eval "$(pyenv init - zsh)"
 
 # tempit
 eval "$(tempit init zsh)"
+
+# Powerlevel10k
+source ~/.powerlevel10k/powerlevel10k.zsh-theme
+[[ -f ~/.p10k.zsh ]] || p10k configure
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh

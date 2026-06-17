@@ -120,9 +120,9 @@ if confirm "Install base packages (curl, git, htop, vim, zsh, tmux, etc.)?"; the
     success "Base packages installed"
 fi
 
-# -- Shell: Prezto + Starship -------------------------------------------------
+# -- Shell: Prezto + Powerlevel10k --------------------------------------------
 
-if confirm "Install prezto + starship (zsh framework & prompt)?"; then
+if confirm "Install prezto + powerlevel10k (zsh framework & prompt)?"; then
     # Prezto
     if [[ ! -d "${ZDOTDIR:-$HOME}/.zprezto" ]]; then
         git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
@@ -137,12 +137,13 @@ if confirm "Install prezto + starship (zsh framework & prompt)?"; then
         success "Default shell changed to zsh"
     fi
 
-    # Starship
-    case "$DISTRO" in
-        arch)   pkg_install starship ;;
-        debian) ensure_cargo && cargo install starship ;;
-    esac
-    success "Starship installed"
+    # Powerlevel10k
+    if [[ ! -d "${HOME}/.powerlevel10k" ]]; then
+        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.powerlevel10k
+        success "Powerlevel10k installed"
+    else
+        warn "Powerlevel10k already installed, skipping"
+    fi
 fi
 
 # -- FiraCode Nerd Font -------------------------------------------------------
